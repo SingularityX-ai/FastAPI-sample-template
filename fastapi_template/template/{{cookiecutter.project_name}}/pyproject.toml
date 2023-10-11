@@ -1,0 +1,252 @@
+[tool.poetry]
+name = "{{cookiecutter.project_name}}"
+version = "0.1.0"
+description = ""
+authors = [
+
+]
+maintainers = [
+
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.100.0"
+uvicorn = { version = "^0.22.0", extras = ["standard"] }
+{%- if cookiecutter.gunicorn == "True" %}
+gunicorn = "^21.2.0"
+{%- endif %}
+{%- if cookiecutter.add_users == "True" %}
+{%- if cookiecutter.orm == "sqlalchemy" %}
+fastapi-users = "^12.1.2"
+httpx-oauth = "^0.10.2"
+fastapi-users-db-sqlalchemy = "^6.0.1"
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.pydanticv1 == "True" %}
+pydantic = { version = "^1", extras=["dotenv"] }
+{%- else %}
+pydantic = "^2"
+pydantic-settings = "^2"
+{%- endif %}
+yarl = "^1.9.2"
+ujson = "^5.8.0"
+{%- if cookiecutter.orm == "piccolo" %}
+{%- if cookiecutter.db_info.name == "postgresql" %}
+piccolo = {version = "^0.117.0", extras = ["postgres"]}
+{%- elif cookiecutter.db_info.name == "sqlite" %}
+piccolo = {version = "^0.117.0", extras = ["sqlite"]}
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.orm == "sqlalchemy" %}
+SQLAlchemy = {version = "^2.0.18", extras = ["asyncio"]}
+{%- if cookiecutter.enable_migrations == "True" %}
+alembic = "^1.11.1"
+{%- endif %}
+{%- if cookiecutter.db_info.name == "postgresql" %}
+asyncpg = {version = "^0.28.0", extras = ["sa"]}
+{%- elif cookiecutter.db_info.name == "sqlite" %}
+aiosqlite = "^0.19.0"
+{%- elif cookiecutter.db_info.name == "mysql" %}
+aiomysql = "^0.2.0"
+mysqlclient = "^2.2.0"
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.orm == "tortoise" %}
+tortoise-orm = "^0.19.3"
+{%- if cookiecutter.enable_migrations == "True" %}
+aerich = "^0.7.1"
+{%- endif %}
+{%- if cookiecutter.db_info.name == "postgresql" %}
+asyncpg = "^0.28.0"
+{%- elif cookiecutter.db_info.name == "sqlite" %}
+aiosqlite = "<0.19.0"
+{%- elif cookiecutter.db_info.name == "mysql" %}
+aiomysql = "^0.2.0"
+mysqlclient = "^2.2.0"
+cryptography = "^41.0.1"
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.orm == "ormar" %}
+ormar = "^0.12.2"
+{%- if cookiecutter.enable_migrations == "True" %}
+alembic = "^1.11.1"
+{%- endif %}
+{%- if cookiecutter.db_info.name == "postgresql" %}
+asyncpg = "^0.28.0"
+psycopg2-binary = "^2.9.6"
+{%- elif cookiecutter.db_info.name == "sqlite" %}
+aiosqlite = "^0.19.0"
+{%- elif cookiecutter.db_info.name == "mysql" %}
+aiomysql = "^0.2.0"
+mysqlclient = "^2.2.0"
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.enable_redis == "True" %}
+redis = {version = "^4.6.0", extras = ["hiredis"]}
+{%- endif %}
+{%- if cookiecutter.self_hosted_swagger == 'True' %}
+aiofiles = "^23.1.0"
+{%- endif %}
+{%- if cookiecutter.orm == "psycopg" %}
+psycopg = { version = "^3.1.9", extras = ["binary", "pool"] }
+{%- endif %}
+httptools = "^0.6.0"
+{%- if cookiecutter.api_type == "graphql" %}
+strawberry-graphql = { version = "^0.194.4", extras = ["fastapi"] }
+{%- endif %}
+{%- if cookiecutter.enable_rmq == "True" %}
+aio-pika = "^9.1.4"
+{%- endif %}
+{%- if cookiecutter.prometheus_enabled == "True" %}
+prometheus-client = "^0.17.0"
+prometheus-fastapi-instrumentator = "6.0.0"
+{%- endif %}
+{%- if cookiecutter.sentry_enabled == "True" %}
+sentry-sdk = "^1.27.1"
+{%- endif %}
+{%- if cookiecutter.otlp_enabled == "True" %}
+opentelemetry-api = "^1.18.0"
+opentelemetry-sdk = "^1.18.0"
+opentelemetry-exporter-otlp = "^1.18.0"
+opentelemetry-instrumentation = "^0.39b0"
+opentelemetry-instrumentation-fastapi = "^0.39b0"
+{%- if cookiecutter.enable_loguru != "True" %}
+opentelemetry-instrumentation-logging = "^0.39b0"
+{%- endif %}
+{%- if cookiecutter.enable_redis == "True" %}
+opentelemetry-instrumentation-redis = "^0.39b0"
+{%- endif %}
+{%- if cookiecutter.db_info.name == "postgresql" and cookiecutter.orm in ["ormar", "tortoise"] %}
+opentelemetry-instrumentation-asyncpg = "^0.39b0"
+{%- endif %}
+{%- if cookiecutter.orm == "sqlalchemy" %}
+opentelemetry-instrumentation-sqlalchemy = "^0.39b0"
+{%- endif %}
+{%- if cookiecutter.enable_rmq == "True" %}
+opentelemetry-instrumentation-aio-pika = "^0.39b0"
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.enable_loguru == "True" %}
+loguru = "^0.7.0"
+{%- endif %}
+{%- if cookiecutter.enable_kafka == "True" %}
+aiokafka = "^0.8.1"
+{%- endif %}
+{%- if cookiecutter.enable_taskiq == "True" %}
+taskiq = "^0"
+taskiq-fastapi = "^0"
+
+    {%- if cookiecutter.enable_redis == "True" %}
+taskiq-redis = "^0"
+    {%- endif %}
+
+    {%- if cookiecutter.enable_rmq == "True" %}
+taskiq-aio-pika = "^0"
+    {%- endif %}
+
+    {%- if (cookiecutter.enable_rmq or cookiecutter.enable_rmq) != "True" %}
+pyzmq = "^25"
+    {%- endif %}
+
+{%- endif %}
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.1"
+flake8 = "~4.0.1"
+mypy = "^1.1.1"
+isort = "^5.11.4"
+pre-commit = "^3.0.1"
+wemake-python-styleguide = "^0.17.0"
+black = "^22.12.0"
+autoflake = "^1.6.1"
+pytest-cov = "^4.0.0"
+anyio = "^3.6.2"
+pytest-env = "^0.8.1"
+{%- if cookiecutter.enable_redis == "True" %}
+fakeredis = "^2.5.0"
+{%- endif %}
+{%- if cookiecutter.orm == "tortoise" %}
+asynctest = "^0.13.0"
+nest-asyncio = "^1.5.6"
+{%- endif %}
+httpx = "^0.23.3"
+{%- if cookiecutter.enable_taskiq == "True" %}
+taskiq = { version = "^0", extras = ["reload"] }
+{%- endif %}
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = ["{{cookiecutter.project_name}}",]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+implicit_reexport = true
+allow_untyped_decorators = true
+warn_unused_ignores = false
+warn_return_any = false
+namespace_packages = true
+{%- if cookiecutter.api_type == "graphql" %}
+plugins = ["strawberry.ext.mypy_plugin"]
+{%- endif %}
+
+{%- if cookiecutter.enable_redis == "True" %}
+
+# Remove this and add `types-redis`
+# when the issue https://github.com/python/typeshed/issues/8242 is resolved.
+[[tool.mypy.overrides]]
+module = [
+    'redis.asyncio'
+]
+ignore_missing_imports = true
+
+{%- endif %}
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore:.*unclosed.*:ResourceWarning",
+]
+env = [
+    "{{cookiecutter.project_name | upper}}_ENVIRONMENT=pytest",
+    {%- if cookiecutter.db_info.name == "sqlite" %}
+    "{{cookiecutter.project_name | upper}}_DB_FILE=test_db.sqlite3",
+    {%- else %}
+    "{{cookiecutter.project_name | upper}}_DB_BASE={{cookiecutter.project_name}}_test",
+    {%- endif %}
+    {%- if cookiecutter.orm == "piccolo" %}
+    "PICCOLO_CONF={{cookiecutter.project_name}}.piccolo_conf",
+    {%- endif %}
+    {%- if cookiecutter.sentry_enabled == "True" %}
+    "{{cookiecutter.project_name | upper}}_SENTRY_DSN=",
+    {%- endif %}
+]
+
+{%- if cookiecutter.orm == "tortoise" %}
+{%- if cookiecutter.enable_migrations == "True" %}
+[tool.aerich]
+tortoise_orm = "{{cookiecutter.project_name}}.db.config.TORTOISE_CONFIG"
+location = "./{{cookiecutter.project_name}}/db/migrations"
+src_folder = "./{{cookiecutter.project_name}}"
+{%- endif %}
+{%- endif %}
+
+[fastapi-template.options]
+{%- for key, value in cookiecutter.items() %}
+{%- if not key.startswith("_") and not key == "db_info" %}
+{{key}} = "{{value}}"
+{%- endif %}
+{%- endfor %}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

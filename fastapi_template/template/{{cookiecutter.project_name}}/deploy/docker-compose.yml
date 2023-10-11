@@ -1,0 +1,242 @@
+version: '3.9'
+
+services:
+  api: &main_app
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: {{cookiecutter.project_name}}:{{"${" }}{{cookiecutter.project_name | upper }}_VERSION:-latest{{"}"}}
+    restart: always
+    env_file:
+      - .env
+    {%- if cookiecutter.traefik_labels == "True" %}
+    labels:
+      # Enables traefik for this container.
+      - traefik.enable=true
+      - traefik.http.routers.{{cookiecutter.project_name}}.rule=Host(`{{ "${" }}{{cookiecutter.project_name | upper}}_TRAEFIK_HOST:-{{cookiecutter.project_name}}.localhost{{ "}" }}`)
+      - traefik.http.routers.{{cookiecutter.project_name}}.entrypoints=http
+      - traefik.http.routers.{{cookiecutter.project_name}}.service={{cookiecutter.project_name}}
+      - traefik.http.services.{{cookiecutter.project_name}}.loadbalancer.server.port={{ "${" }}{{cookiecutter.project_name | upper}}_PORT:-8000{{ "}" }}
+    networks:
+      - default
+      - traefik-shared
+    {%- endif %}
+    {%- if ((cookiecutter.db_info.name != "none" and cookiecutter.db_info.name != "sqlite") or
+            (cookiecutter.enable_redis == "True") or
+            (cookiecutter.enable_rmq == "True") or
+            (cookiecutter.enable_kafka == "True")) %}
+    depends_on:
+      {%- if cookiecutter.db_info.name != "none" %}
+      {%- if cookiecutter.db_info.name != "sqlite" %}
+      db:
+        condition: service_healthy
+      {%- endif %}
+      {%- endif %}
+      {%- if cookiecutter.enable_redis == "True" %}
+      redis:
+        condition: service_healthy
+      {%- endif %}
+      {%- if cookiecutter.enable_rmq == "True" %}
+      rmq:
+        condition: service_healthy
+      {%- endif %}
+      {%- if cookiecutter.enable_kafka == "True" %}
+      kafka:
+        condition: service_healthy
+      {%- endif %}
+    {%- endif %}
+    environment:
+      {{cookiecutter.project_name | upper }}_HOST: 0.0.0.0
+      {%- if cookiecutter.db_info.name != "none" %}
+      {%- if cookiecutter.db_info.name == "sqlite" %}
+      {{cookiecutter.project_name | upper }}_DB_FILE: /db_data/db.sqlite3
+      {%- else %}
+      {{cookiecutter.project_name | upper}}_DB_HOST: {{cookiecutter.project_name}}-db
+      {{cookiecutter.project_name | upper}}_DB_PORT: {{cookiecutter.db_info.port}}
+      {{cookiecutter.project_name | upper}}_DB_USER: {{cookiecutter.project_name}}
+      {{cookiecutter.project_name | upper}}_DB_PASS: {{cookiecutter.project_name}}
+      {{cookiecutter.project_name | upper}}_DB_BASE: {{cookiecutter.project_name}}
+      {%- endif %}
+      {%- endif %}
+      {%- if cookiecutter.enable_rmq == 'True' %}
+      {{cookiecutter.project_name | upper }}_RABBIT_HOST: {{cookiecutter.project_name}}-rmq
+      {%- endif %}
+      {%- if cookiecutter.enable_redis == 'True' %}
+      {{cookiecutter.project_name | upper }}_REDIS_HOST: {{cookiecutter.project_name}}-redis
+      {%- endif %}
+      {%- if cookiecutter.enable_kafka == "True" %}
+      TESTKAFKA_KAFKA_BOOTSTRAP_SERVERS: '["{{cookiecutter.project_name}}-kafka:9092"]'
+      {%- endif %}
+    {%- if cookiecutter.db_info.name == "sqlite" %}
+    volumes:
+      - {{cookiecutter.project_name}}-db-data:/db_data/
+    {%- endif %}
+
+  {%- if cookiecutter.enable_taskiq == "True" %}
+
+  taskiq-worker:
+    <<: *main_app
+    labels: []
+    command:
+      - taskiq
+      - worker
+      - {{cookiecutter.project_name}}.tkq:broker
+  {%- endif %}
+
+  {%- if cookiecutter.db_info.name == "postgresql" %}
+
+  db:
+    image: {{cookiecutter.db_info.image}}
+    hostname: {{cookiecutter.project_name}}-db
+    environment:
+      POSTGRES_PASSWORD: "{{cookiecutter.project_name}}"
+      POSTGRES_USER: "{{cookiecutter.project_name}}"
+      POSTGRES_DB: "{{cookiecutter.project_name}}"
+    volumes:
+      - {{cookiecutter.project_name}}-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U {{cookiecutter.project_name}}
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  {%- endif %}
+
+  {%- if cookiecutter.db_info.name == "mysql" %}
+
+  db:
+    image: {{cookiecutter.db_info.image}}
+    hostname: {{cookiecutter.project_name}}-db
+    restart: always
+    environment:
+      MYSQL_ROOT_USER: "{{cookiecutter.project_name}}"
+      MYSQL_ROOT_PASSWORD: "{{cookiecutter.project_name}}"
+      MYSQL_DATABASE: "{{cookiecutter.project_name}}"
+      MYSQL_AUTHENTICATION_PLUGIN: "mysql_native_password"
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 10s
+      timeout: 5s
+      retries: 40
+    volumes:
+      - {{cookiecutter.project_name}}-db-data:/bitnami/mysql/data
+  {%- endif %}
+
+  {%- if cookiecutter.enable_migrations == 'True' %}
+
+  migrator:
+    image: {{cookiecutter.project_name}}:{{"${" }}{{cookiecutter.project_name | upper }}_VERSION:-latest{{"}"}}
+    restart: "no"
+    {%- if cookiecutter.orm in ['sqlalchemy', 'ormar'] %}
+    command: alembic upgrade head
+    {%- elif cookiecutter.orm == 'tortoise' %}
+    command: aerich upgrade
+    {%- elif cookiecutter.orm == 'piccolo' %}
+    command: piccolo migrations forwards all
+    {%- endif %}
+    {%- if cookiecutter.db_info.name == "sqlite" %}
+    environment:
+      {{cookiecutter.project_name | upper }}_DB_FILE: /db_data/db.sqlite3
+      {%- if cookiecutter.orm == 'piccolo' %}
+      PICCOLO_CONF: "{{cookiecutter.project_name}}.piccolo_conf"
+      {%- endif %}
+    volumes:
+      - {{cookiecutter.project_name}}-db-data:/db_data/
+    {%- else %}
+    environment:
+      {{cookiecutter.project_name | upper}}_DB_HOST: {{cookiecutter.project_name}}-db
+      {{cookiecutter.project_name | upper}}_DB_PORT: {{cookiecutter.db_info.port}}
+      {{cookiecutter.project_name | upper}}_DB_USER: {{cookiecutter.project_name}}
+      {{cookiecutter.project_name | upper}}_DB_PASS: {{cookiecutter.project_name}}
+      {{cookiecutter.project_name | upper}}_DB_BASE: {{cookiecutter.project_name}}
+    {%- if cookiecutter.orm == 'piccolo' %}
+      PICCOLO_CONF: "{{cookiecutter.project_name}}.piccolo_conf"
+    {%- endif %}
+    {%- endif %}
+    {%- if cookiecutter.db_info.name != "sqlite" %}
+    depends_on:
+      db:
+        condition: service_healthy
+    {%- endif %}
+  {%- endif %}
+
+  {%- if cookiecutter.enable_redis == "True" %}
+
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: "{{cookiecutter.project_name}}-redis"
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+  {%- endif %}
+
+  {%- if cookiecutter.enable_rmq == "True" %}
+
+  rmq:
+    image: rabbitmq:3.9.16-alpine
+    hostname: "{{cookiecutter.project_name}}-rmq"
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    healthcheck:
+      test: rabbitmq-diagnostics check_running -q
+      interval: 3s
+      timeout: 3s
+      retries: 50
+  {%- endif %}
+
+  {%- if cookiecutter.enable_kafka == "True" %}
+
+  zookeeper:
+    image: "bitnami/zookeeper:3.7.1"
+    hostname: "{{cookiecutter.project_name}}-zookeeper"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_LOG_LEVEL: "ERROR"
+    healthcheck:
+      test: zkServer.sh status
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  kafka:
+    image: "bitnami/kafka:3.2.0"
+    hostname: "{{cookiecutter.project_name}}-kafka"
+    environment:
+      KAFKA_BROKER_ID: "1"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://{{cookiecutter.project_name}}-kafka:9092"
+      KAFKA_CFG_ZOOKEEPER_CONNECT: "{{cookiecutter.project_name}}-zookeeper:2181"
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+  {%- endif %}
+
+{% if cookiecutter.db_info.name != 'none' %}
+
+volumes:
+  {{cookiecutter.project_name}}-db-data:
+    name: {{cookiecutter.project_name}}-db-data
+{%- endif %}
+
+{%- if cookiecutter.traefik_labels == "True" %}
+
+networks:
+  # Network for traefik.
+  traefik-shared:
+    name: traefik-shared
+{%- endif %}
