@@ -2,7 +2,6 @@ import abc
 import enum
 from collections import UserDict
 from typing import Any, Callable, List, Optional
-
 import click
 from prompt_toolkit.shortcuts import checkboxlist_dialog, radiolist_dialog
 from pydantic import BaseModel
