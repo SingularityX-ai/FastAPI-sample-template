@@ -15,14 +15,14 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-      - name: Extract PR title from commit message
-        shell: bash
-        run: |
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
-          if [[ "$COMMIT_MSG" == "Merge pull request"* ]]; then
-              PR_TITLE=$(echo "$COMMIT_MSG" | awk -F "- " '{print $2}')
-              echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
-          fi
+      # - name: Extract PR title from commit message
+      #   shell: bash
+      #   run: |
+      #     COMMIT_MSG="${{ github.event.head_commit.message }}"
+      #     if [[ "$COMMIT_MSG" == "Merge pull request"* ]]; then
+      #         PR_TITLE=$(echo "$COMMIT_MSG" | awk -F "- " '{print $2}')
+      #         echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
+      #     fi
       # - name: Extract first line of commit message
       #   shell: bash
       #   run: |
