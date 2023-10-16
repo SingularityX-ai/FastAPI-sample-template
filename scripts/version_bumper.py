@@ -10,6 +10,12 @@ EXPANDED_VER_RE = re.compile(
 )
 
 def parse_args() -> argparse.Namespace:
+    """
+    Parse command line arguments.
+
+    Returns:
+        argparse.Namespace: The parsed command line arguments.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "file",
@@ -24,6 +30,16 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def get_dependencies(path: Path, section: str) -> List[str]:
+    """
+    Get the dependencies from a file.
+
+    Args:
+        path (Path): The path to the file.
+        section (str): The section to look for in the file.
+
+    Returns:
+        List[str]: The list of dependencies.
+    """
     read_file = path.read_text()
     recording = False
     deps = []
@@ -43,6 +59,15 @@ def get_dependencies(path: Path, section: str) -> List[str]:
     return deps
 
 def get_new_version(package_name: str) -> Optional[str]:
+    """
+    Get the latest version of a package from PyPI.
+
+    Args:
+        package_name (str): The name of the package.
+
+    Returns:
+        Optional[str]: The latest version of the package, or None if it cannot be found.
+    """
     resp = requests.get(f'https://pypi.org/pypi/{package_name}/json')
     if not resp.ok:
         return None
@@ -51,6 +76,15 @@ def get_new_version(package_name: str) -> Optional[str]:
 
 
 def bump_version(dependency: str) -> str:
+    """
+    Bump the version of a dependency.
+
+    Args:
+        dependency (str): The dependency string.
+
+    Returns:
+        str: The updated dependency string, or None if the version cannot be bumped.
+    """
     exp_match = EXPANDED_VER_RE.match(dependency)
     raw_match = None
     if exp_match:
@@ -73,6 +107,9 @@ def bump_version(dependency: str) -> str:
     return None
 
 def main():
+    """
+    The main function.
+    """
     args = parse_args()
     deps = get_dependencies(args.file, args.section)
     lines = args.file.read_text().splitlines(keepends=False)
