@@ -40,6 +40,9 @@ def get_dependencies(path: Path, section: str) -> List[str]:
 
     Returns:
         List[str]: The list of dependencies.
+
+    Raises:
+        FileNotFoundError: If the file specified by `path` does not exist.
     """
     read_file = path.read_text()
     recording = False
