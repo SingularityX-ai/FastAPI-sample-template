@@ -78,14 +78,25 @@ def get_new_version(package_name: str) -> Optional[str]:
 
 def bump_version(dependency: str) -> str:
     """
-    Bump the version of a dependency.
+Bump the version of a dependency.
 
     Args:
         dependency (str): The dependency string.
 
     Returns:
         str: The updated dependency string, or None if the version cannot be bumped.
-    """
+
+    Raises:
+        None
+
+    Examples:
+        >>> bump_version("requests==2.22.0")
+        'requests==2.23.0'
+        >>> bump_version("flask==1.1.1")
+        'flask==1.1.2'
+        >>> bump_version("numpy==1.18.1")
+        'numpy==1.18.2'
+"""
     exp_match = EXPANDED_VER_RE.match(dependency)
     raw_match = None
     if exp_match:
