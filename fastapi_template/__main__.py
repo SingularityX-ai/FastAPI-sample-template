@@ -15,6 +15,10 @@ def generate_project(context: BuilderContext) -> None:
     Generate actual project with given context.
 
     :param context: builder_context
+    :type context: BuilderContext
+    :raises FailedHookException: If a hook fails during project generation.
+    :raises OutputDirExistsException: If the output directory already exists.
+    :returns: None
     """
     try:
         cookiecutter(
