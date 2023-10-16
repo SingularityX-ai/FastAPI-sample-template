@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
         "file",
         type=Path,
     )
+    
     parser.add_argument(
         "--section",
         "-s",
