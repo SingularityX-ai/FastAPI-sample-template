@@ -16,6 +16,7 @@ def parse_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: The parsed command line arguments.
     """
+    
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "file",
