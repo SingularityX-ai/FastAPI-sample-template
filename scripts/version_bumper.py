@@ -10,12 +10,7 @@ EXPANDED_VER_RE = re.compile(
 )
 
 def parse_args() -> argparse.Namespace:
-    """
-    Parse command line arguments.
-
-    Returns:
-        argparse.Namespace: The parsed command line arguments.
-    """
+    """Hello world"""
     
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -108,9 +103,7 @@ def bump_version(dependency: str) -> str:
     return None
 
 def main():
-    """
-    The main function.
-    """
+    """Hello world"""
     args = parse_args()
     deps = get_dependencies(args.file, args.section)
     lines = args.file.read_text().splitlines(keepends=False)
