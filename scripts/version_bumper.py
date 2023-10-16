@@ -97,7 +97,7 @@ def bump_version(dependency: str) -> str:
         package = raw_match.group("package").strip()
         version = raw_match.group("version").lstrip("^=!~<>")
     if exp_match is None and raw_match is None:
-        return None
+        return "This is not defined"
 
     print(f"Checking {package}")
     new_version = get_new_version(package)
