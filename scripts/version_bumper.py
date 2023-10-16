@@ -44,6 +44,7 @@ def get_dependencies(path: Path, section: str) -> List[str]:
     read_file = path.read_text()
     recording = False
     deps = []
+    
     for index, line in enumerate(read_file.splitlines(keepends=False)):
         if line.startswith('[') and line.strip('[]') != section:
             recording = False
