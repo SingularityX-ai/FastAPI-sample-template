@@ -15,6 +15,16 @@ def parse_args() -> argparse.Namespace:
 
     Returns:
         argparse.Namespace: The parsed command line arguments.
+
+    Raises:
+        None
+
+    Examples:
+        >>> args = parse_args()
+        >>> print(args.file)
+        Path('example.txt')
+        >>> print(args.section)
+        'tool.poetry.dependencies'
     """
     
     parser = argparse.ArgumentParser()
