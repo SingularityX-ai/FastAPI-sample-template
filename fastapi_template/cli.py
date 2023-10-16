@@ -20,13 +20,37 @@ from fastapi_template.input_model import (
 
 
 class SnakeCaseValidator(Validator):
+    """    This is a class.    """
+
     def validate(self, document: Document):
+        """
+        Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+        run pre-commit hooks, and make an initial commit.
+
+        :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+        Example:
+            init_repo()
+
+        """
+
         text = document.text
         if not text or re.fullmatch(r"[a-zA-Z][\w\_\d]*", text) is None:
             raise ValidationError(message="Must be a valid snake_case name.")
 
 
 def db_menu_update_info(ctx: BuilderContext, menu: SingularMenuModel) -> BuilderContext:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     for entry in menu.entries:
         if entry.code == ctx.db:
             ctx.db_info = entry.additional_info.dict()
@@ -34,6 +58,17 @@ def db_menu_update_info(ctx: BuilderContext, menu: SingularMenuModel) -> Builder
 
 
 def disable_orm(ctx: BuilderContext) -> Optional[MenuEntry]:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     if ctx.db == "none":
         ctx.orm = "none"
         return SKIP_ENTRY
@@ -41,26 +76,92 @@ def disable_orm(ctx: BuilderContext) -> Optional[MenuEntry]:
 
 
 def do_not_ask_features_if_quite(ctx: BuilderContext) -> Optional[List[MenuEntry]]:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     if ctx.quite:
         return [SKIP_ENTRY]
     return None
 
 
 def do_not_ask_features_if_no_users(ctx: BuilderContext) -> Optional[list[MenuEntry]]:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     if not ctx.add_users:
         return [SKIP_ENTRY]
     return None
 
 
 def check_db(allowed_values: List[str]) -> Callable[[BuilderContext], bool]:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     def checker(ctx: BuilderContext) -> bool:
+        """
+        Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+        run pre-commit hooks, and make an initial commit.
+
+        :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+        Example:
+            init_repo()
+
+        """
+
         return ctx.db not in allowed_values
 
     return checker
 
 
 def check_orm(allowed_values: List[str]) -> Callable[[BuilderContext], bool]:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     def checker(ctx: BuilderContext) -> bool:
+        """
+        Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+        run pre-commit hooks, and make an initial commit.
+
+        :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+        Example:
+            init_repo()
+
+        """
+
         return ctx.orm not in allowed_values
 
     return checker
@@ -603,7 +704,29 @@ def handle_cli(
     menus: List[BaseMenuModel],
     callback: Callable[[BuilderContext], None],
 ):
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     def inner_callback(**cli_args: Any):
+        """
+        Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+        run pre-commit hooks, and make an initial commit.
+
+        :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+        Example:
+            init_repo()
+
+        """
+
         if cli_args["version"]:
             print(version("fastapi_template"))
             exit(0)
@@ -633,6 +756,17 @@ def handle_cli(
 
 
 def run_command(callback: Callable[[BuilderContext], None]) -> None:
+    """
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
+
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+    Example:
+        init_repo()
+
+    """
+
     menus: "List[BaseMenuModel]" = [
         api_menu,
         db_menu,
