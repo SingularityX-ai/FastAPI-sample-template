@@ -20,6 +20,8 @@ from fastapi_template.input_model import (
 
 
 class SnakeCaseValidator(Validator):
+    """    This is a class.    """
+
     
     def validate(self, document: Document):
         text = document.text
@@ -604,7 +606,44 @@ def handle_cli(
     menus: List[BaseMenuModel],
     callback: Callable[[BuilderContext], None],
 ):
+    """
+    Handle the command line interface (CLI) for the given menus.
+
+    Args:
+        menus (List[BaseMenuModel]): A list of menu models.
+        callback (Callable[[BuilderContext], None]): A callback function that takes a BuilderContext as input and returns None.
+
+    Returns:
+        Callable[..., None]: The inner callback function.
+
+    Raises:
+        None
+
+    Example:
+        def my_callback(context: BuilderContext) -> None:
+            # Do something with the context
+            pass
+
+        handle_cli(menus, my_callback)
+    """
+
     def inner_callback(**cli_args: Any):
+        """
+        Inner callback function.
+
+        Args:
+            **cli_args: Keyword arguments representing command line arguments.
+
+        Raises:
+            None
+
+        Returns:
+            None
+
+        Example:
+            inner_callback(version=True)
+        """
+
         if cli_args["version"]:
             print(version("fastapi_template"))
             exit(0)
@@ -634,6 +673,26 @@ def handle_cli(
 
 
 def run_command(callback: Callable[[BuilderContext], None]) -> None:
+    """
+    Run the command with the given callback.
+
+    Args:
+        callback: A callable that takes a BuilderContext object as input and performs some action.
+
+    Raises:
+        None
+
+    Returns:
+        None
+
+    Example:
+        run_command(callback)
+
+    Note:
+        - Do not return the original code.
+        - Do not modify the functional parts of the code.
+    """
+
     menus: "List[BaseMenuModel]" = [
         api_menu,
         db_menu,
