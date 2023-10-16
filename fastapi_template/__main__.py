@@ -28,6 +28,7 @@ def generate_project(context: BuilderContext) -> None:
         if isinstance(exc, OutputDirExistsException):
             cprint("Directory with such name already exists!", "red")
         return
+    
     cprint(
         "Project successfully generated. You can read information about usage in README.md"
     )
