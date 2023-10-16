@@ -85,7 +85,21 @@ def bump_version(dependency: str) -> str:
 
     Returns:
         str: The updated dependency string, or None if the version cannot be bumped.
-    """
+
+    Raises:
+        None
+
+    Examples:
+        >>> bump_version("^requests==2.25.0")
+        '^requests==2.26.0'
+        >>> bump_version("numpy>=1.19.0")
+        'numpy>=1.19.0'
+
+    Note:
+        This function checks if there is a new version available for the given dependency.
+        If a new version is found, it updates the version in the dependency string and returns the updated string.
+        If no new version is found or the version cannot be bumped, it returns None.
+"""
     exp_match = EXPANDED_VER_RE.match(dependency)
     raw_match = None
     if exp_match:
