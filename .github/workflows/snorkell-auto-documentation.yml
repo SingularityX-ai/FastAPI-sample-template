@@ -23,16 +23,16 @@ jobs:
               PR_TITLE=$(echo "$COMMIT_MSG" | awk -F "- " '{print $2}')
               echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
           fi
-      - name: Extract first line of commit message
-        shell: bash
-        run: |
-          FIRST_LINE=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
-          echo "FIRST_LINE=${FIRST_LINE}" >> $GITHUB_ENV
+      # - name: Extract first line of commit message
+      #   shell: bash
+      #   run: |
+      #     FIRST_LINE=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
+      #     echo "FIRST_LINE=${FIRST_LINE}" >> $GITHUB_ENV
       - name: Run Script
         shell: bash
         run: |
           echo "Commit Message: ${{ github.event.head_commit.message }}"
-          echo "Commit Message - First line: ${{ env.FIRST_LINE }}"
+          # echo "Commit Message - First line: ${{ env.FIRST_LINE }}"
           echo "PR Title: ${{ env.PR_TITLE }}"
           echo "Repository: ${{ github.repository }}"
           echo "Branch Name: ${{ env.BRANCH_NAME}}"
