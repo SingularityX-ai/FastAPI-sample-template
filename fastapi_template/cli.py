@@ -2,7 +2,6 @@ import re
 import shutil
 from importlib.metadata import version
 from typing import Any, Callable, List, Optional
-
 from click import Command, Option
 from prompt_toolkit import prompt
 from prompt_toolkit.document import Document
