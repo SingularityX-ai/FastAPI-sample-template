@@ -56,6 +56,17 @@ def replace_resources():
 
 
 def init_repo():
+    """
+Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+run pre-commit hooks, and make an initial commit.
+
+:raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+Example:
+    init_repo()
+
+"""
+
     subprocess.run(["git", "init"], stdout=subprocess.PIPE)
     cprint("Git repository initialized.", "green")
     subprocess.run(["git", "add", "."], stdout=subprocess.PIPE)
