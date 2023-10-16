@@ -11,6 +11,17 @@ REPLACE_MANIFEST = "replaceable_files.json"
 
 
 def delete_resource(resource):
+    """
+Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+run pre-commit hooks, and make an initial commit.
+
+:raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+Example:
+    init_repo()
+
+"""
+
     if os.path.isfile(resource):
         os.remove(resource)
     elif os.path.isdir(resource):
@@ -18,6 +29,17 @@ def delete_resource(resource):
 
 
 def delete_resources_for_disabled_features():
+    """
+Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+run pre-commit hooks, and make an initial commit.
+
+:raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+Example:
+    init_repo()
+
+"""
+
     with open(CONDITIONAL_MANIFEST) as manifest_file:
         manifest = json.load(manifest_file)
         for feature_name, feature in manifest.items():
@@ -34,6 +56,17 @@ def delete_resources_for_disabled_features():
 
 
 def replace_resources():
+    """
+Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+run pre-commit hooks, and make an initial commit.
+
+:raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+Example:
+    init_repo()
+
+"""
+
     print(
         "⭐ Placing {} nicely in your {} ⭐".format(
             colored("resources", color="green"), colored("new project", color="blue")
@@ -56,6 +89,17 @@ def replace_resources():
 
 
 def init_repo():
+    """
+Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+run pre-commit hooks, and make an initial commit.
+
+:raises subprocess.CalledProcessError: If any of the subprocess commands fail.
+
+Example:
+    init_repo()
+
+"""
+
     subprocess.run(["git", "init"], stdout=subprocess.PIPE)
     cprint("Git repository initialized.", "green")
     subprocess.run(["git", "add", "."], stdout=subprocess.PIPE)
