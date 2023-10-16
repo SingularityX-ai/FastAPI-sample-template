@@ -20,6 +20,7 @@ from fastapi_template.input_model import (
 
 
 class SnakeCaseValidator(Validator):
+    
     def validate(self, document: Document):
         text = document.text
         if not text or re.fullmatch(r"[a-zA-Z][\w\_\d]*", text) is None:
