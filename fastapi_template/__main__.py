@@ -4,7 +4,6 @@ from cookiecutter.exceptions import (FailedHookException,
                                      OutputDirExistsException)
 from cookiecutter.main import cookiecutter
 from termcolor import cprint
-
 from fastapi_template.cli import run_command
 from fastapi_template.input_model import BuilderContext
 
