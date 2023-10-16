@@ -78,27 +78,14 @@ def get_new_version(package_name: str) -> Optional[str]:
 
 def bump_version(dependency: str) -> str:
     """
-    Bump the version of a dependency.
+    Initialize a git repository, add files to index, install dependencies, install pre-commit hooks,
+    run pre-commit hooks, and make an initial commit.
 
-    Args:
-        dependency (str): The dependency string.
+    :raises subprocess.CalledProcessError: If any of the subprocess commands fail.
 
-    Returns:
-        str: The updated dependency string, or None if the version cannot be bumped.
+    Example:
+        init_repo()
 
-    Raises:
-        None
-
-    Examples:
-        >>> bump_version("^requests==2.25.0")
-        '^requests==2.26.0'
-        >>> bump_version("numpy>=1.19.0")
-        'numpy>=1.19.0'
-
-    Note:
-        This function checks if there is a new version available for the given dependency.
-        If a new version is found, it updates the version in the dependency string and returns the updated string.
-        If no new version is found or the version cannot be bumped, it returns None.
     """
     exp_match = EXPANDED_VER_RE.match(dependency)
     raw_match = None
