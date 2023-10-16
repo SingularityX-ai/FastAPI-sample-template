@@ -1,7 +1,7 @@
 name: Testing fastapi-template
 
-on:
-  pull_request:
+# on:
+#   pull_request:
 
 jobs:
   pre_job:
